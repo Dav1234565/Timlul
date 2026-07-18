@@ -1,0 +1,124 @@
+html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>עוזר הרצאות מבוסס בינה מלאכותית</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="nav">
+  <div class="nav-in wrap">
+    <div class="brand"><span class="logo">🎓</span><span>עוזר הרצאות בינה מלאכותית</span></div>
+    <nav class="nav-links">
+      <a href="#" data-view="dashboard" class="active">לוח בקרה</a>
+      <a href="#" data-view="record">הקלטה</a>
+      <a href="#" data-view="search">חיפוש</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- DASHBOARD -->
+  <section id="view-dashboard" class="view active">
+    <div class="row" style="justify-content:space-between">
+      <div>
+        <h1>ההרצאות שלך</h1>
+        <p class="muted">הקלט פעם אחת וקבל תמלול, נושאים, סיכומים, מבחנים, כרטיסיות, מפת מושגים ומורה פרטי מבוסס בינה מלאכותית.</p>
+      </div>
+      <button class="btn btn-primary" data-goto="record">+ הקלט הרצאה</button>
+    </div>
+    <div id="dash-list" class="grid cols-3" style="margin-top:18px"></div>
+  </section>
+
+  <!-- RECORD -->
+  <section id="view-record" class="view">
+    <h1>הקלטת הרצאה</h1>
+    <p class="muted">צור הרצאה מתמלול — באמצעות הקלטה, העלאת קובץ שמע, הדבקת תמלול, או טעינת דוגמה מוכנה.</p>
+    <div class="card" style="margin-top:16px;padding:22px">
+      <div class="grid cols-2">
+        <label class="field-wrap">כותרת ההרצאה
+          <input id="rec-title" class="field" placeholder='למשל: מבוא לתכנות מונחה עצמים' style="margin-top:6px" />
+        </label>
+        <label class="field-wrap">שפה
+          <select id="rec-lang" class="field" style="margin-top:6px">
+            <option value="he">עברית</option>
+            <option value="en">אנגלית</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn btn-ghost active" data-mode="record">🎙 הקלטה</button>
+        <button class="btn btn-ghost" data-mode="upload">📁 העלה שמע</button>
+        <button class="btn btn-ghost" data-mode="paste">📝 הדבק תמלול</button>
+        <button class="btn btn-ghost" data-mode="sample">📚 דוגמאות</button>
+      </div>
+
+      <!-- record mode -->
+      <div id="mode-record" class="mode">
+        <div class="rec-box" style="margin-top:16px">
+          <div class="timer" id="rec-timer">0:00</div>
+          <div class="row" style="justify-content:center;margin-top:6px">
+            <span class="dot" id="rec-dot"></span>
+            <span class="muted" id="rec-state">לא התחיל</span>
+          </div>
+          <div class="row" style="justify-content:center;margin-top:14px">
+            <button class="btn btn-rose" id="btn-start">● התחל הקלטה</button>
+            <button class="btn btn-dark hidden" id="btn-pause">⏸ השהה</button>
+            <button class="btn btn-dark hidden" id="btn-stop">■ עצור</button>
+            <button class="btn btn-ghost hidden" id="btn-reset">↺ הקלט מחדש</button>
+          </div>
+          <audio id="rec-audio" controls class="hidden" style="margin-top:14px;width:100%;max-width:420px"></audio>
+          <p class="muted" style="margin-top:10px;font-size:12px">ללא מפתח API לתמלול, ההקלטה תשתמש בתמלול לדוגמה של השפה שנבחרה כדי להדגים את כל השלבים.</p>
+        </div>
+      </div>
+
+      <!-- upload mode -->
+      <div id="mode-upload" class="mode hidden">
+        <div class="rec-box" style="margin-top:16px">
+          <input id="up-file" type="file" accept="audio/*" class="field" />
+          <p class="muted" style="margin-top:8px;font-size:12px">העלאת קובץ שמע תשתמש אף היא בתמלול לדוגמה (אין המרה אוטומטית בצד הלקוח ללא שירות תמלול).</p>
+        </div>
+      </div>
+
+      <!-- paste mode -->
+      <div id="mode-paste" class="mode hidden">
+        <textarea id="paste-text" class="field" style="margin-top:16px" placeholder="הדבק כאן את תמליל ההרצאה המלא…"></textarea>
+      </div>
+
+      <!-- sample mode -->
+      <div id="mode-sample" class="mode hidden">
+        <div class="row" style="margin-top:16px">
+          <button class="btn btn-ghost" id="sample-he">דוגמה בעברית — תכנות מונחה עצמים</button>
+          <button class="btn btn-ghost" id="sample-en">Sample in English — OOP</button>
+        </div>
+        <p class="muted" style="margin-top:8px;font-size:12px">הדוגמאות טוענות תמליל מוכן כדי להפעיל את כל צינור העיבוד.</p>
+      </div>
+
+      <div id="rec-error" class="hidden" style="margin-top:14px;background:#fef2f2;color:var(--rose);border-radius:12px;padding:10px 12px;font-size:14px"></div>
+
+      <div class="row" style="margin-top:18px">
+        <button class="btn btn-primary" id="btn-generate">✨ צור חומרי לימוד</button>
+        <span class="muted" id="gen-note"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LECTURE DETAIL -->
+  <section id="view-lecture" class="view"></section>
+
+  <!-- SEARCH -->
+  <section id="view-search" class="view">
+    <h1>חיפוש גלובלי</h1>
+    <p class="muted">חפש בכל ההרצאות, הנושאים והתמלילים ששמרת.</p>
+    <input id="search-input" class="field" style="margin-top:14px" placeholder="למשל: פולימורפיזם, מחלקות, inheritance…" />
+    <div id="search-results" style="margin-top:18px"></div>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
